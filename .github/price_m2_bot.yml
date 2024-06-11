@@ -1,0 +1,20 @@
+state_syncer:
+  enabled: true
+  clickup_sync_enabled: true
+  clickup_state_mapping:
+      "1 - Work In Progress": "IN PROGRESS"
+      "1 - Changes Requested": "CHANGES REQUESTED"
+      "2 - Needs Review": "NEEDS REVIEW"
+      "3 - Completed Reviews": "COMPLETED REVIEWS"
+      "4 - Ready to Merge after CI": "COMPLETED REVIEWS"
+      "5 - Closed": "COMPLETE"
+automerger:
+  enabled: true
+commander:
+  enabled: true
+  botName: "@price_m2_bot"
+  commands:
+    help: true
+    benchmark: true
+    automerger: true
+    rerunbuild: true

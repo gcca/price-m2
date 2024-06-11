@@ -1,0 +1,34 @@
+# ALCALDIA
+- model: price_m2.alcaldia
+  pk: 1
+  fields:
+    name: Álvaro Obregón
+# USO_CONSTRUCCION
+- model: price_m2.usoconstruccion
+  pk: 1
+  fields:
+    name: Áreas verdes
+- model: price_m2.usoconstruccion
+  pk: 2
+  fields:
+    name: Centro de barrio
+- model: price_m2.usoconstruccion
+  pk: 3
+  fields:
+    name: Equipamiento
+- model: price_m2.usoconstruccion
+  pk: 4
+  fields:
+    name: Habitacional
+- model: price_m2.usoconstruccion
+  pk: 5
+  fields:
+    name: Habitacional y comercial
+- model: price_m2.usoconstruccion
+  pk: 6
+  fields:
+    name: Industrial
+- model: price_m2.usoconstruccion
+  pk: 7
+  fields:
+    name: Sin Zonificación
