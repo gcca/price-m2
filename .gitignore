@@ -1,0 +1,54 @@
+# API: Django/Python env
+*.log
+*.pot
+*.pyc
+*.py[cod]
+__pycache__/
+local_settings.py
+db.sqlite3
+media
+venv/
+env/
+ENV/
+.venv/
+.pytest_cache/
+.pytest_cache/*
+
+# Thumbnails
+._*
+.DS_Store
+
+# Coverage reports
+htmlcov/
+.coverage
+.coverage.*
+.cache
+coverage.xml
+
+# Translations
+*.mo
+*.pot
+
+# Env settings
+.env
+.env.*
+
+# Web: NodeJS/React
+node_modules/
+build/
+dist/
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# Keys
+*.pem
+*.p12
+*.key
+*.crt
+*.csr

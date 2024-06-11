@@ -1,0 +1,26 @@
+services:
+  api:
+    build: api
+    container_name: construction-api
+    volumes:
+      - ./api/construction:/app
+    depends_on:
+      - postgres
+    environment:
+      - PRICE_M2_DOMAIN=*
+      - PRICE_M2_DB_NAME=postgres
+      - PRICE_M2_DB_USER=postgres
+      - PRICE_M2_DB_PASSWORD=postgres
+      - PRICE_M2_DB_HOST=postgres
+      - PRICE_M2_DB_PORT=5432
+    ports:
+      - 8000:80
+  postgres:
+    image: postgres:16.3-alpine3.19
+    container_name: construction-postgres
+    environment:
+      - POSTGRES_PASSWORD=postgres
+    volumes:
+      - ./api/resources/dump.sql:/docker-entrypoint-initdb.d/dump.sql
+    ports:
+      - 5432:5432
