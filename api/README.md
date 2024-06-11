@@ -115,4 +115,4 @@ $ python manage.py price-m2_pull-prices-to-db
 $ sudo gunicorn --bind 0.0.0.0:80 - construction.wsgi:application
 ```
 
-Notar el uso de `sudo` debido al uso del puertro `80`.
+Notar el uso de `sudo` debido al uso del puerto `80`.
