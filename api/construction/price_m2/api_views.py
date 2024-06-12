@@ -9,7 +9,7 @@ from rest_framework.decorators import api_view
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 
-from .services import PriceM2Service, ServiceError
+from .services import PriceM2ServiceFactory, ServiceError
 
 
 @extend_schema(
@@ -152,12 +152,13 @@ def aggregated_price_by_m2(request, zip_code=None, aggregate=None):
             "Query-parameter `construction_type` inválido: Uso: '?construction_type={1-7}'"
         ) from error
 
-    price_m2_service = PriceM2Service()
+    price_m2_service = PriceM2ServiceFactory.MakeByAggregate(
+        aggregate=aggregate
+    )
 
     try:
         price_m2_result = price_m2_service.calculate(
             zip_code=zip_code,
-            aggregate=aggregate,
             construction_type=construction_type,
         )
     except ServiceError as error:

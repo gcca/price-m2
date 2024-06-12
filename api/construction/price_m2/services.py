@@ -1,6 +1,9 @@
 import logging
+from abc import ABC, abstractmethod
+from typing import Type, override
 
 from django.db.models import (
+    Aggregate,
     Avg,
     Count,
     ExpressionWrapper,
@@ -30,9 +33,17 @@ class ServiceError(Exception):
         return self.message
 
 
-class PriceM2Service:
+class PriceM2ServiceBase(ABC):
 
-    def calculate(self, zip_code: str, aggregate: str, construction_type: int):
+    @abstractmethod
+    def calculate(self, zip_code: str, construction_type: int): ...
+
+    def _calculate(
+        self,
+        zip_code: str,
+        aggregation_operator: Type[Aggregate],
+        construction_type: int,
+    ):
         """Evalúa la agregación (avg, max, min) filtrando los `CatastroInfo`s por `zip_code`
         y `construction_type`.
 
@@ -73,7 +84,7 @@ class PriceM2Service:
                 "Error buscando construction_type=%s. Info: zip_code=%s, aggregate=%s",
                 construction_type,
                 zip_code,
-                aggregate,
+                aggregation_operator.name,
             )
             raise ServiceError(NO_CONSTRUCTION_FOUND_MESSAGE)
 
@@ -81,7 +92,7 @@ class PriceM2Service:
             logging.warning(
                 "Error buscando zip_code=%s. Info: aggregate=%s, construction_type=%s",
                 zip_code,
-                aggregate,
+                aggregation_operator.name,
                 construction_type,
             )
             raise ServiceError(NO_ZIP_CODE_FOUND_MESSAGE)
@@ -101,25 +112,6 @@ class PriceM2Service:
             output_field=FloatField(),
         )
 
-        match aggregate:
-            case "avg":
-                aggregation_operator = Avg
-            case "max":
-                aggregation_operator = Max
-            case "min":
-                aggregation_operator = Min
-            case _:
-                # Este código no debería ejecutarse nunca.
-                # Se retorna un `ServiceError` para mostrar un freindly-message
-                #   en caso este escenario llegue a producción.
-                logging.debug(
-                    "Unreachable code: llegó el aggregate '%s' a PriceM2Service.calculate.",
-                    aggregate,
-                )
-                raise ServiceError(
-                    f"Aggregate '{aggregate}' no soportado. Valores válidos: avg, max, min."
-                )
-
         catastro_info_result = CatastroInfo.objects.filter(
             codigo_postal=zip_code, uso_construccion=construction_type
         ).aggregate(
@@ -132,10 +124,57 @@ class PriceM2Service:
 
         # TODO: ¿Es necesario un PriceM2Result como wrapper de los resultados en lugar de dict?
         return {
-            "type": aggregate,
+            "type": aggregation_operator.name.lower(),
             "price_unit": catastro_info_result["price_unit"],
             "price_unit_construction": catastro_info_result[
                 "price_unit_construction"
             ],
             "elements": catastro_info_result["elements"],
         }
+
+
+class AvgPriceM2Service(PriceM2ServiceBase):
+
+    @override
+    def calculate(self, zip_code: str, construction_type: int):
+        return self._calculate(zip_code, Avg, construction_type)
+
+
+class MaxPriceM2Service(PriceM2ServiceBase):
+
+    @override
+    def calculate(self, zip_code: str, construction_type: int):
+        return self._calculate(zip_code, Max, construction_type)
+
+
+class MinPriceM2Service(PriceM2ServiceBase):
+
+    @override
+    def calculate(self, zip_code: str, construction_type: int):
+        return self._calculate(zip_code, Min, construction_type)
+
+
+class PriceM2ServiceFactory:
+
+    @staticmethod
+    def MakeByAggregate(aggregate: str) -> PriceM2ServiceBase:
+        match aggregate:
+            case "avg":
+                return AvgPriceM2Service()
+            case "max":
+                return MaxPriceM2Service()
+            case "min":
+                return MinPriceM2Service()
+            case _:
+                # Este código no debería ejecutarse nunca.
+                # Se retorna un `ServiceError` para mostrar un freindly-message
+                #   en caso este escenario llegue a producción.
+                # Adicionalmente, es posible establecer por defecto que
+                #   el factory retorne un tipo de PriceM2Service por default.
+                logging.debug(
+                    "Unreachable code: llegó el aggregate '%s' a PriceM2Service.calculate.",
+                    aggregate,
+                )
+                raise ServiceError(
+                    f"Aggregate '{aggregate}' no soportado. Valores válidos: avg, max, min."
+                )
