@@ -7,11 +7,11 @@
 - model: price_m2.usoconstruccion
   pk: 1
   fields:
-    name: Áreas verdes
+    name: Áreas Verdes
 - model: price_m2.usoconstruccion
   pk: 2
   fields:
-    name: Centro de barrio
+    name: Centro de Barrio
 - model: price_m2.usoconstruccion
   pk: 3
   fields:
@@ -32,3 +32,15 @@
   pk: 7
   fields:
     name: Sin Zonificación
+- model: price_m2.usoconstruccion
+  pk: 8
+  fields:
+    name: Comercial
+- model: price_m2.usoconstruccion
+  pk: 9
+  fields:
+    name: Usos Existentes
+- model: price_m2.usoconstruccion
+  pk: 10
+  fields:
+    name: Polígono de Actuación

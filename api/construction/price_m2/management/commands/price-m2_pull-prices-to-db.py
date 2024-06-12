@@ -35,7 +35,7 @@ class Command(BaseCommand):
 
     ZIP_URL = "https://catalogo.sig.cdmx.gob.mx/documents/75/download"
     # A la fecha sólo se maneja esta cantidad de tipos de construcción
-    LIMIT_USO_CONSTRUCCION = 7
+    LIMIT_USO_CONSTRUCCION = 10
 
     def handle(self, *_, **__):
         failed_pairs = []
@@ -141,10 +141,10 @@ class Command(BaseCommand):
         - Tamaño: 30MB aprox
         - Formato de archivo: zip
         """
+        self.stdout.write("Descargando el archivo...", ending="")
         # El comando podría usar un parámetro `path` para no descargar el csv en cada ejecución
         with urllib.request.urlopen(self.ZIP_URL) as response:
 
-            self.stdout.write("Descargando el archivo...", ending="")
             zip_data = BytesIO(response.read())
             self.stdout.write(self.style.SUCCESS(" OK"))
 
